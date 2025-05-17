@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl mb-4">Classifica Utenti</h2>
+
+<div class="mb-6">
+  <h3 class="text-xl mb-2">🎮 Utenti con più giochi giocati</h3>
+  <ul class="list-decimal pl-5 max-h-48 overflow-y-auto border p-2 rounded">
+    {% for user, stat in most_played %}
+      <li>{{ user }} — {{ stat.played }} giochi giocati</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="mb-6">
+  <h3 class="text-xl mb-2">🚀 Sviluppatori con più giochi pubblicati</h3>
+  <ul class="list-decimal pl-5 max-h-48 overflow-y-auto border p-2 rounded">
+    {% for user, count in most_uploaded %}
+      <li>{{ user }} — {{ count }} giochi caricati</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-xl mb-4">{{ _('Giochi in attesa di approvazione') }}</h2>
+<ul class="list-disc pl-5">
+{% for game in games %}
+  <li>{{ game.title }} - {{ game.author }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

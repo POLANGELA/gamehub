@@ -2,6 +2,7 @@
 {% block content %}
 <h1 class="text-3xl mb-4">Benvenuto su GameHub</h1>
 {% if user %}
+<a href="/leaderboard" class="text-yellow-300 underline">Classifica utenti</a><br>
 <p>Ciao {{ user }}!</p>
 <p>Giochi totali: {{ stats.total }} | Giocati: {{ stats.played }}</p>
 <a href="/logout" class="text-red-300 underline">Logout</a><br>

@@ -1,14 +1,13 @@
-
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<h2 class="text-xl mb-4">Registrati</h2>
-<form method="POST">
-  <input name="username" placeholder="Username" required class="p-2 bg-gray-800 text-white w-full"><br>
-  <input name="password" type="password" placeholder="Password" required class="p-2 bg-gray-800 text-white w-full"><br>
-  <select name="role" class="p-2 bg-gray-800 text-white w-full">
-    <option value="player">Giocatore</option>
-    <option value="developer">Sviluppatore</option>
+<h2 class="text-xl mb-4">{{ _('Registrati') }}</h2>
+<form method="POST" class="space-y-2">
+  <input name="username" required placeholder="Username" class="p-2 w-full bg-gray-800 text-white"><br>
+  <input name="password" type="password" required placeholder="Password" class="p-2 w-full bg-gray-800 text-white"><br>
+  <select name="role" class="p-2 w-full bg-gray-800 text-white">
+    <option value="player">{{ _('Giocatore') }}</option>
+    <option value="developer">{{ _('Sviluppatore') }}</option>
   </select><br>
-  <button type="submit" class="bg-green-600 px-4 py-2 mt-2 rounded text-white">Registrati</button>
+  <button class="bg-green-600 px-4 py-2 text-white rounded" type="submit">{{ _('Registrati') }}</button>
 </form>
 {% endblock %}
