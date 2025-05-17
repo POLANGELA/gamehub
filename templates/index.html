@@ -1,8 +1,5 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
-<h1 class="text-3xl font-bold mb-4">{{ _('Benvenuto su GameHub!') }}</h1>
-<p>{{ _('Registrati, carica giochi o inizia a giocare!') }}</p>
-{% if not session.get('user') %}
-  <a href="/auth/login" class="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded">{{ _('Login') }}</a>
-{% endif %}
+<h1 class="text-2xl font-bold mb-4">Benvenuto su GameHub!</h1>
+<p>Accedi, esplora giochi e carica i tuoi!</p>
 {% endblock %}
