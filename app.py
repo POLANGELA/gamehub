@@ -38,6 +38,8 @@ def register():
         password = generate_password_hash(request.form['password'])
         role = request.form['role']
         users[username] = {'password': password, 'role': role}
+        session['user'] = username
+        session['role'] = role
         played_stats[username] = {'total': 0, 'played': 0}
         flash("Registrazione completata.")
         return redirect(url_for('login'))
