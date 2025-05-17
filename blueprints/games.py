@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, session, redirect, request, url_fo
 from extensions import db
 from models import Game, User
 
-games_bp = Blueprint('games', __name__, url_prefix='/games')
+games_bp = Blueprint('games', __name__)
 
 @games_bp.route('/upload', methods=['GET', 'POST'])
 def upload():
