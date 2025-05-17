@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, session, redirect, request, url_for, flash
-from app import db
+from extensions import db
 from models import Game, User
 
 games_bp = Blueprint('games', __name__, url_prefix='/games')

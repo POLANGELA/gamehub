@@ -1,6 +1,5 @@
 from flask import Flask, redirect, request
-from flask_sqlalchemy import SQLAlchemy
-from flask_babel import Babel, _
+from extensions import db, babel
 import os
 
 app = Flask(__name__)
@@ -9,8 +8,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['BABEL_DEFAULT_LOCALE'] = 'it'
 
-db = SQLAlchemy(app)
-babel = Babel(app)
+db.init_app(app)
+babel.init_app(app)
 
 from blueprints.auth import auth_bp
 from blueprints.games import games_bp
