@@ -16,3 +16,8 @@ def upload():
         flash("Gioco caricato. In attesa di approvazione.")
         return redirect(url_for('games.upload'))
     return render_template('upload.html')
+
+
+@games_bp.route('/home')
+def home():
+    return render_template('index.html')
