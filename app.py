@@ -25,7 +25,7 @@ def get_locale():
 
 @app.route("/")
 def home_redirect():
-    return redirect("/home")
+    return redirect("/auth/login")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
