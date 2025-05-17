@@ -1,24 +1,45 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-import os
+from werkzeug.utils import secure_filename
+import os, random, zipfile
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'supersecret'
 
+UPLOAD_FOLDER = 'uploads'
+GAMES_FOLDER = 'static/games'
+ALLOWED_EXTENSIONS = {'zip'}
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(GAMES_FOLDER, exist_ok=True)
+
 users = {}
 games = []
+played_stats = {}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
-def home():
-    return render_template('index.html', user=session.get('user'))
+def index():
+    username = session.get('user')
+    stats = {}
+    if username:
+        stats = played_stats.get(username, {'total': 0, 'played': 0})
+    return render_template('index.html', user=username, stats=stats)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
+        if username in users:
+            flash("Username già registrato.")
+            return redirect(url_for('register'))
         password = generate_password_hash(request.form['password'])
-        users[username] = {'password': password}
-        flash("Registrazione completata!")
+        role = request.form['role']
+        users[username] = {'password': password, 'role': role}
+        played_stats[username] = {'total': 0, 'played': 0}
+        flash("Registrazione completata.")
         return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -30,33 +51,57 @@ def login():
         user = users.get(username)
         if user and check_password_hash(user['password'], password):
             session['user'] = username
-            return redirect(url_for('dashboard'))
-        flash("Credenziali errate.")
+            session['role'] = user['role']
+            return redirect(url_for('index'))
+        flash("Credenziali non valide.")
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('home'))
-
-@app.route('/dashboard')
-def dashboard():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-    user_games = [g for g in games if g['author'] == session['user']]
-    return render_template('dashboard.html', games=user_games)
+    return redirect(url_for('index'))
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    if 'user' not in session:
-        return redirect(url_for('login'))
+    if 'user' not in session or session.get('role') != 'developer':
+        flash("Accesso riservato agli sviluppatori.")
+        return redirect(url_for('index'))
     if request.method == 'POST':
-        title = request.form['title']
-        games.append({'title': title, 'author': session['user']})
-        flash("Gioco caricato (placeholder)!")
-        return redirect(url_for('dashboard'))
+        file = request.files['zipfile']
+        title = request.form['title'].replace(" ", "_")
+        if file and allowed_file(file.filename):
+            folder_path = os.path.join(GAMES_FOLDER, title)
+            if os.path.exists(folder_path):
+                flash("Gioco già esistente.")
+                return redirect(request.url)
+            temp_path = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
+            file.save(temp_path)
+            with zipfile.ZipFile(temp_path, 'r') as zip_ref:
+                if 'index.html' not in zip_ref.namelist():
+                    flash("Lo zip deve contenere un index.html.")
+                    return redirect(request.url)
+                os.makedirs(folder_path)
+                zip_ref.extractall(folder_path)
+                games.append(title)
+                for user in played_stats:
+                    played_stats[user]['total'] = len(games)
+            os.remove(temp_path)
+            flash("Gioco caricato con successo!")
+            return redirect(url_for('upload'))
+        else:
+            flash("File non valido. Carica uno ZIP con index.html.")
     return render_template('upload.html')
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+@app.route('/play')
+def play():
+    if not games:
+        return "Nessun gioco disponibile."
+    selected = random.choice(games)
+    user = session.get('user')
+    if user:
+        played_stats[user]['played'] += 1
+    return render_template('play.html', game=selected)
+
+@app.route('/fullscreen/<game>')
+def fullscreen(game):
+    return render_template('fullscreen.html', game=game)

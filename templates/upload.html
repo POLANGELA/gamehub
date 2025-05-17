@@ -1,8 +1,10 @@
+
 {% extends "base.html" %}
 {% block content %}
-<h2 class="text-2xl mb-4">Carica un nuovo gioco</h2>
-<form method="POST" class="space-y-2">
-    <input type="text" name="title" placeholder="Titolo del gioco" class="p-2 w-full rounded bg-gray-800 text-white"><br>
-    <button type="submit" class="bg-purple-600 px-4 py-2 rounded text-white">Carica</button>
+<h2 class="text-xl mb-4">Carica un gioco (.zip con index.html)</h2>
+<form method="POST" enctype="multipart/form-data">
+  <input name="title" placeholder="Titolo del gioco" required class="p-2 bg-gray-800 text-white w-full"><br>
+  <input type="file" name="zipfile" accept=".zip" class="p-2 bg-gray-800 text-white w-full"><br>
+  <button type="submit" class="bg-purple-600 px-4 py-2 mt-2 rounded text-white">Carica</button>
 </form>
 {% endblock %}

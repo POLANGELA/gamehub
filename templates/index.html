@@ -1,12 +1,14 @@
+
 {% extends "base.html" %}
 {% block content %}
-<h1 class="text-3xl font-bold mb-4">Benvenuto su GameHub</h1>
+<h1 class="text-3xl mb-4">Benvenuto su GameHub</h1>
 {% if user %}
-  <p>Ciao {{ user }}!</p>
-  <a href="/dashboard" class="text-blue-300 underline">Dashboard</a> |
-  <a href="/logout" class="text-red-400 underline">Logout</a>
+<p>Ciao {{ user }}!</p>
+<p>Giochi totali: {{ stats.total }} | Giocati: {{ stats.played }}</p>
+<a href="/logout" class="text-red-300 underline">Logout</a><br>
+<a href="/play" class="text-green-400 underline">Gioca ora</a>
 {% else %}
-  <a href="/login" class="text-blue-300 underline">Login</a> |
-  <a href="/register" class="text-green-300 underline">Registrati</a>
+<a href="/login" class="text-blue-300 underline">Login</a> |
+<a href="/register" class="text-green-300 underline">Registrati</a>
 {% endif %}
 {% endblock %}
