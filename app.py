@@ -14,7 +14,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(GAMES_FOLDER, exist_ok=True)
 
 users = {}
-games = []
+games = []  # [{ 'title': str, 'author': str, 'plays': set() }]
 played_stats = {}
 
 def allowed_file(filename):
@@ -82,7 +82,7 @@ def upload():
                     return redirect(request.url)
                 os.makedirs(folder_path)
                 zip_ref.extractall(folder_path)
-                games.append(title)
+                games.append({'title': title, 'author': session['user'], 'plays': set()})
                 for user in played_stats:
                     played_stats[user]['total'] = len(games)
             os.remove(temp_path)
@@ -97,12 +97,25 @@ def play():
     if not games:
         return "Nessun gioco disponibile."
     selected = random.choice(games)
+    if user:
+        for g in games:
+            if g['title'] == selected['title']:
+                g['plays'].add(user)
     user = session.get('user')
     if user:
         played_stats[user]['played'] += 1
     return render_template('play.html', game=selected)
 
 @app.route('/fullscreen/<game>')
+@app.route('/dashboard')
+def dashboard():
+    if 'user' not in session or session.get('role') != 'developer':
+        flash("Accesso riservato agli sviluppatori.")
+        return redirect(url_for('index'))
+    dev_games = [g for g in games if g['author'] == session['user']]
+    return render_template('dashboard.html', games=dev_games)
+
+
 def fullscreen(game):
     return render_template('fullscreen.html', game=game)
 
