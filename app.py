@@ -19,7 +19,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(games_bp)
 app.register_blueprint(admin_bp)
 
-@babel.locale_selector
+@babel.localeselector
 def get_locale():
     return request.args.get('lang') or 'it'
 
